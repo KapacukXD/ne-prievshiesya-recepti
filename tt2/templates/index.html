@@ -9,16 +9,11 @@
                 <div class="col-md6 border rounded">
                     <div class="col">
                         <div class="card shadow-sm">
-                            <svg class="bd-placeholder-img card-img-top" width="100%" height="225"
-                                 xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Заполнитель: Миниатюра"
-                                 preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title>
-                                <rect width="100%" height="100%" fill="#55595c"></rect>
-                                <text x="50%" y="50%" fill="#eceeef" dy=".3em"><a href='recipe/{{item.id}}'>{{item.title}}</a></text>
-                            </svg>
 
-                            <div class="card-body">
+                            <a href='recipe/{{item.id}}'><img class="card-img-top" src="https://avatars.mds.yandex.net/i?id=b75e339273d90bbabfa25f6bc6a4430c-5866055-images-thumbs&n=13&exp=1" alt="Card image cap"></a>
+                                <div class="card-body">
                                 <p class="card-text"><font style="vertical-align: inherit;"><font
-                                        style="vertical-align: inherit;">{{item.show_cont}}</font></font></p>
+                                        style="vertical-align: inherit;">{{item.title}}</font></font></p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-sm btn-outline-secondary"><font
