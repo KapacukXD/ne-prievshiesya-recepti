@@ -1,6 +1,8 @@
 from flask import Flask, render_template, redirect, request, jsonify
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.exceptions import abort
+from os import mkdir, path
+from PIL import Image
 
 from forms.LoginForm import LoginForm
 from forms.news import NewsForm
@@ -19,19 +21,6 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 def load_user(user_id):
     db_sess = db_session.create_session()
     return db_sess.query(User).get(user_id)
-
-
-@app.route("/")
-def index():
-    db_sess = db_session.create_session()
-    # news = db_sess.query(News).filter(News.is_private != True)
-    if current_user.is_authenticated:
-        news = db_sess.query(News).filter(
-            (News.user == current_user) | (News.is_private != True))
-    else:
-        news = db_sess.query(News).filter(News.is_private != True)
-
-    return render_template("index.html", news=news)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -74,6 +63,19 @@ def login():
     return render_template('login.html', title='Авторизация', form=form)
 
 
+@app.route('/uploader', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        f = request.files['file']
+        i = 2
+        if not path.exists(f'static/images/{i}'):
+            mkdir(f'static/images/{i}')
+            mkdir(f'static/images/{i}/posts')
+            mkdir(f'static/images/{i}/log')
+        im = Image.open(f)
+        im.save(f'static/images/{i}/log/uploaded_file.png')
+        return f'{i}'
+
 @app.route('/logout')
 @login_required
 def logout():
@@ -102,6 +104,7 @@ def add_news():
     return render_template('news.html', title='Добавление новости',
                            form=form)
 
+
 @app.route('/recipe/<int:id>', methods=['GET', 'POST'])
 @login_required
 def show_rec(id):
@@ -115,6 +118,7 @@ def show_rec(id):
                            title='#',
                            content=news.content
                            )
+
 
 @app.route('/news/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -163,6 +167,29 @@ def news_delete(id):
     else:
         abort(404)
     return redirect('/')
+
+
+@app.route("/", methods=['GET', 'POST'])
+def index():
+    searchword = request.args.get('search')
+    print(searchword)
+    db_sess = db_session.create_session()
+    # news = db_sess.query(News).filter(News.is_private != True)
+    if current_user.is_authenticated:
+        if searchword:
+            print(1)
+            news = db_sess.query(News).filter(
+                (News.user == current_user) | (News.is_private != True), News.title.like(f'%{searchword}%'))
+        else:
+            news = db_sess.query(News).filter(
+                (News.user == current_user) | (News.is_private != True))
+    else:
+        if searchword:
+            news = db_sess.query(News).filter((News.is_private != True), News.title.like(f'%{searchword}%'))
+        else:
+            news = db_sess.query(News).filter(News.is_private != True)
+
+    return render_template("index.html", news=news)
 
 
 from flask import make_response
