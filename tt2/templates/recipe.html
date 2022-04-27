@@ -1,4 +1,38 @@
+<style>
+.scrolling {
+ margin: 0 left;
+ width: 60em;
+ height: 13em;
+ overflow-x: scroll;
+ overflow-y: hidden;
+ white-space: nowrap;
+ word-wrap: normal;
+}
+
+.scrolling img {
+ width: 15em;
+ height: 10em;
+}
+
+</style>
+
 {% extends "base.html" %}
 {% block content %}
+
+<h1>{{tite}}</h1><br>
+<h2>Ингридиенты</h2>
+<p>
+{{ings}}
+</p><br>
+{% if ch %}
+<div class="scrolling">
+    {% for item in imgs%}
+    <img src='/{{item}}' alt=""/>
+    {%endfor%}
+</div>
+<br>
+{% endif %}
+<h2>Рецепт</h2>
+<p>{{rec}}</p>
 {{ content }}
 {% endblock %}
